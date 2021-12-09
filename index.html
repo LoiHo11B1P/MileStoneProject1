@@ -16,10 +16,13 @@
         <div id="game-intro">
             <h1>Tank-em</h1>
         </div>
-        <div id="game-area">
+        <div id="game-area" onmousemove="aimPoint(event)">
             <div id="game-ground"></div>
             <div id="tank-control">
-
+                <label id='shell-count'>Shell Count:</label>
+                <div>
+                    <button onclick='startPause()'>Start Game</button>
+                </div>
             </div>
         </div>
         

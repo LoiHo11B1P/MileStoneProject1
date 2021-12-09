@@ -17,19 +17,19 @@ body {
 #game-area{
     margin: 0 auto;
     position: relative;
-    width: 1200px;
+    width: 100vw;
     height: 800px;
     background-color: cornflowerblue;
 }
 #game-ground {
-    width: 1200px;
+    width: 100vw;
     height: 20px;
     position: absolute;
     bottom:100px;
     background-color: rgb(31, 78, 52);
 }
 #tank-control {
-    width: 1200px;
+    width: 100vw;
     height: 100px;
     background-color: brown;
     position: absolute;
@@ -41,4 +41,10 @@ body {
     background-color: chocolate;
     position: absolute;
     bottom: 120px;
+}
+.shell {
+    width: 20px;
+    height: 40px;
+    background-color: red;
+    position: absolute;
 }
