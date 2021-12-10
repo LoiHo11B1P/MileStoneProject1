@@ -4,7 +4,10 @@ const shellCounter = document.querySelector('#shell-count');
 // hold attribute relate to the stage of the game
 const gameStage = {
     running: false,
-
+    leftBoundary: gameArea.clientWidth,
+    rightBoundary: 0,
+    bottomBoundary: gameArea.clientHeight-160,
+    
 }
 
 function startPause() {
@@ -29,7 +32,7 @@ const player = {
     aimPointX:  0,
     aimPointY:  0,
     positionX: 100,
-    positionY: 120,
+    positionY: gameArea.clientHeight - 160,
     img: '',
     playerTank: null,
     shellCount: 20,
@@ -40,7 +43,7 @@ const player = {
         this.playerTank.setAttribute('id', 'player-tank')
         this.updateShellCount()
         gameArea.append(this.playerTank)
-        this.updatePosition(100,120)
+        this.updatePosition(100,this.positionY)
     },
 
     adjustAimPoint(x,y) {
@@ -79,7 +82,7 @@ const player = {
 
     moveTank () {
         this.playerTank.style.left = `${this.positionX}px`;
-        this.playerTank.style.bottom = `${this.positionY}px`;
+        this.playerTank.style.top = `${this.positionY}px`;
     },
 
     useShell() {
@@ -118,7 +121,7 @@ gameArea.addEventListener('click', (e) => {
     
 })
 
-// Bullet
+// Projectiles
 
 class Shell {
     shell = null
@@ -129,53 +132,58 @@ class Shell {
     constructor(spawnCoords, explodeCoord) {
         // spawnCoord will be at tank position x & y
         // explodeCoord will be where the mouse is click
-        this.currentX = spawnCoords.x;
+        this.currentX = spawnCoords.x + 30;
         this.currentY = spawnCoords.y;
         this.destX = explodeCoord.x;
-        this.destY = explodeCoord.y;
+        this.destY = explodeCoord.y-60;
 
         this.shell = document.createElement('img');
         //this.shell.setAttribute('class', 'shell');
-        this.shell.style.width = '20px';
-        this.shell.style.height = '40px';
+        this.shell.style.width = '10px';
+        this.shell.style.height = '10px';
         this.shell.style.backgroundColor = 'red';
         this.shell.style.position = 'absolute';
         this.shell.style.left = `${this.currentX}px`;
-        this.shell.style.bottom = `${this.currentY}px`;
+        this.shell.style.top = `${this.currentY}px`;
         //console.log(`bullet @ x:${spawnCoords.x}, y:${spawnCoords.y}`)
         gameArea.append(this.shell)
         this.shellTravel()
-        this.shellExplode()
+        //this.shellExplode()
     }
 
     shellExplode() {
-        setTimeout(() => {
-            this.shellTravelTimer = null;
-            this.shell.remove()
+       
+        this.shellTravelTimer = null;
+        this.shell.remove()
             
-        }, 4000);
     }
 
     shellTravel() {
         // the flight path should be distance x/4000, distance y/4000
-        let travelX = this.destX**2 - this.currentX;
-        let travelY = (this.destY**2) - this.currentY;
+        let distanX = (this.destX - this.currentX)
+        let distanY = (this.destY - this.currentY)
+
+        let angle = Math.atan2(distanY, distanX)
+
+        let verlocityX = Math.cos(angle)
+        let verlocityY = Math.sin(angle)
+
+        console.log(`verlocityX: ${verlocityX}`)
+        console.log(`verlocityY: ${verlocityY}`)
+
         this.shellTravelTimer = setInterval(() => {
-            
 
-            if(travelY < 0) {
-                travelY = this.currentY
+            this.currentX += verlocityX;
+            this.currentY += verlocityY;
+
+            if((this.currentX * -1 >= this.destX || this.currentX >= gameStage.leftBoundary-10) ||
+                (this.currentY >= gameStage.bottomBoundary || this.currentY <= this.destY)) {
+                this.shellExplode()
             }
 
-            if(travelX < 0) {
-                this.currentX -= travelX/400000;  
-            } else {
-                this.currentX += travelX/400000;
-            }
+            this.shell.style.left = `${this.currentX}px`;
+            this.shell.style.top = `${this.currentY}px`;
             
-            this.currentY += travelY/400000;
-            this.shell.style.bottom = `${this.currentY}px`
-            this.shell.style.left = `${this.currentX}px`
         }, 1);
     }
 }
