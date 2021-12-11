@@ -10,3 +10,7 @@ Browser game
 7. Expand game to be more interesting - 
 8. Doe up with extra styling
 9. Polish the game to finish
+
+
+Credit:
+https://opengameart.org/content/game-art-packs
