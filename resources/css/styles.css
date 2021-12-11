@@ -19,7 +19,10 @@ body {
     position: relative;
     width: 100vw;
     height: 800px;
-    background-color: cornflowerblue;
+    /*background-color: cornflowerblue;*/
+    background-image: url('../media/bg.jpg');
+    background-repeat: no-repeat, repeat;
+    background-size: cover; 
 }
 #game-ground {
     width: 100vw;
@@ -39,7 +42,7 @@ body {
 #player-tank {
     width: 60px;
     height: 40px;
-    background-color: chocolate;
+    padding: 0;
     position: absolute;
     bottom: 120px;
 }

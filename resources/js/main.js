@@ -7,13 +7,22 @@ const gameStage = {
     leftBoundary: gameArea.clientWidth,
     rightBoundary: 0,
     bottomBoundary: gameArea.clientHeight-160,
+    projectiles: [],
+    enemies: []
     
 }
 
-function startPause() {
+// toggle start or pause game
+function startPause(e) {
     gameStage.running = !gameStage.running;
+    if(!gameStage.running) {
+        e.target.style.backgroundColor = 'orange'
+    } else {
+        e.target.style.backgroundColor ='green'
+    }
 }
 
+// position of mouseclick serve as aim point for projectile
 function aimPoint(e) {
     player.adjustAimPoint(e.clientX, e.clientY)
 
@@ -33,23 +42,32 @@ const player = {
     aimPointY:  0,
     positionX: 100,
     positionY: gameArea.clientHeight - 160,
+    prevX: 100,
     img: '',
     playerTank: null,
+    tankTurret: null,
+    turretAngle: -45,
     shellCount: 20,
     maxShell: 25,
 
     initPlayer() {
+        this.tankTurret = document.createElement('img')
+        this.tankTurret.setAttribute('src','resources/media/gun.gif')
+        this.tankTurret.style.position = 'absolute';
+        this.tankTurret.zIndex = '-1'
         this.playerTank = document.createElement('img')
+        this.playerTank.setAttribute('src','resources/media/tank.gif')
         this.playerTank.setAttribute('id', 'player-tank')
         this.updateShellCount()
         gameArea.append(this.playerTank)
+        gameArea.append(this.tankTurret)
         this.updatePosition(100,this.positionY)
     },
 
     adjustAimPoint(x,y) {
         this.aimPointX = x;
         this.aimPointY = y;
-        console.log(`Aiming @ x:${this.aimPointX}, y:${this.aimPointY}`)
+        //console.log(`Aiming @ x:${this.aimPointX}, y:${this.aimPointY}`)
     },
 
     tankAction(code) {
@@ -81,6 +99,19 @@ const player = {
     },
 
     moveTank () {
+        
+        console.log(this.turretAngle)
+        this.tankTurret.style.transform = `rotate(${this.turretAngle}deg)`;
+        if(this.positionX - this.prevX < 0)  {
+            this.playerTank.style.transform = `rotateY(180deg)`
+            this.tankTurret.style.transform = `rotateY(180deg)`
+            this.tankTurret.style.left = `${this.positionX+60}px`;
+            
+        }
+
+        this.tankTurret.style.left = `${this.positionX+25}px`;
+        this.tankTurret.style.top = `${this.positionY+5}px`;
+        this.prevX = this.positionX
         this.playerTank.style.left = `${this.positionX}px`;
         this.playerTank.style.top = `${this.positionY}px`;
     },
@@ -88,6 +119,7 @@ const player = {
     useShell() {
         this.shellCount--;
         this.updateShellCount()
+        this.moveTank()
     },
 
     reloadShell() {
@@ -98,10 +130,12 @@ const player = {
         }
         
         this.updateShellCount()
+        
     },
 
     updateShellCount() {
         shellCounter.textContent = `Shell: ${this.shellCount}`
+        
     }
 }
 player.initPlayer()
@@ -116,6 +150,9 @@ gameArea.addEventListener('click', (e) => {
     //console.log(`X:${e.x}, Y:${e.y}`)
     if(gameStage.running) {
         let shell = new Shell({x: player.positionX, y: player.positionY}, {x: e.x, y: e.y},player.useShell())
+        shell.id = e.x+'shell'+gameStage.projectiles.length
+        gameStage.projectiles.push(shell)
+        console.log(gameStage.projectiles)
     }
     
     
@@ -128,6 +165,8 @@ class Shell {
     shellTravelTimer = null
     currentX = null
     currentY = null
+    speed = 3
+    id = null
 
     constructor(spawnCoords, explodeCoord) {
         // spawnCoord will be at tank position x & y
@@ -139,8 +178,10 @@ class Shell {
 
         this.shell = document.createElement('img');
         //this.shell.setAttribute('class', 'shell');
-        this.shell.style.width = '10px';
-        this.shell.style.height = '10px';
+        this.shell.style.width = '20px';
+        this.shell.style.height = '20px';
+        this.shell.style.border = "2px solid gold"
+        this.shell.style.borderRadius = "90%"
         this.shell.style.backgroundColor = 'red';
         this.shell.style.position = 'absolute';
         this.shell.style.left = `${this.currentX}px`;
@@ -152,9 +193,16 @@ class Shell {
     }
 
     shellExplode() {
-       
-        this.shellTravelTimer = null;
-        this.shell.remove()
+        let projectileList = gameStage.projectiles;
+        let projectitleIndex = projectileList.indexOf(this.id)
+        console.log(gameStage.projectiles[projectitleIndex])
+        setTimeout(() => {
+            projectileList.splice(projectitleIndex,1)
+            
+            this.shell.remove()
+            console.log(gameStage.projectiles)
+        }, 0);
+        
             
     }
 
@@ -164,9 +212,11 @@ class Shell {
         let distanY = (this.destY - this.currentY)
 
         let angle = Math.atan2(distanY, distanX)
-
-        let verlocityX = Math.cos(angle)
-        let verlocityY = Math.sin(angle)
+        
+        player.turretAngle = angle*180/Math.PI
+        
+        let verlocityX = Math.cos(angle)*this.speed
+        let verlocityY = Math.sin(angle)*this.speed
 
         console.log(`verlocityX: ${verlocityX}`)
         console.log(`verlocityY: ${verlocityY}`)
@@ -178,6 +228,7 @@ class Shell {
 
             if((this.currentX * -1 >= this.destX || this.currentX >= gameStage.leftBoundary-10) ||
                 (this.currentY >= gameStage.bottomBoundary || this.currentY <= this.destY)) {
+                clearInterval(this.shellTravelTimer);
                 this.shellExplode()
             }
 
