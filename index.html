@@ -17,20 +17,22 @@
         <div id="game-intro">
             <h1>Tank-em</h1>
         </div>
-        <div id="game-area" onmousemove="aimPoint(event)">
-            <div id="game-ground"></div>
-            <div id="tank-control">
-                <div class="container">
-                    <div class="row mb-2">
-                        <label class="col-3" id='shell-count'>Shell Count:</label>
-                    </div>
-                    <div class="row">
-                        <button class="btn btn-primary col-2" onclick='startPause(event)'>Start Game</button>
-                    </div>
+        <div id="game-area">
+            
+            
+        </div>
+        <div id="game-ground"></div>
+        <div id="tank-control">
+            <div class="container">
+                <div class="row mb-2">
+                    <label class="col-3" id='shell-count'>Shell Count:</label>
+                    <label class="col-3" id='kill-count'>Enemy Kill: 0</label>
+                </div>
+                <div class="row">
+                    <button class="btn btn-primary col-2" onclick='startPause(event)'>Start Game</button>
                 </div>
             </div>
         </div>
-        
         <script src="./resources/js/main.js" async defer></script>
     </body>
 </html>

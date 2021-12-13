@@ -18,7 +18,7 @@ body {
     margin: 0 auto;
     position: relative;
     width: 100vw;
-    height: 800px;
+    height: 760px;
     /*background-color: cornflowerblue;*/
     background-image: url('../media/bg.jpg');
     background-repeat: no-repeat, repeat;
@@ -26,9 +26,9 @@ body {
 }
 #game-ground {
     width: 100vw;
-    height: 20px;
+    height: 40px;
     position: absolute;
-    bottom:100px;
+    bottom: 100px;
     background-color: rgb(31, 78, 52);
 }
 #tank-control {
@@ -37,18 +37,23 @@ body {
     background-color: brown;
     position: absolute;
     bottom: 0;
-    padding: 10px;
+    padding: 5px;
+    color: white;
+    font-size: 1.5em;
 }
 #player-tank {
-    width: 60px;
-    height: 40px;
     padding: 0;
     position: absolute;
-    bottom: 120px;
+    bottom: 180px;
+    border: 2px solid gold;
 }
 .shell {
     width: 20px;
     height: 40px;
     background-color: red;
     position: absolute;
+}
+
+.enemy{
+    border: 2px solid red;
 }
