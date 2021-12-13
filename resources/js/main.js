@@ -6,7 +6,7 @@ const gameStage = {
     running: false,
     leftBoundary: 0,
     rightBoundary: gameArea.clientWidth - 10,
-    bottomBoundary: gameArea.clientHeight-40,
+    bottomBoundary: gameArea.clientHeight - 40,
     projectiles: [],
     enemies: [],
     spawnEnemyTimer: null,
@@ -26,7 +26,7 @@ function gamgeLoop () {
                     projectile.currentX + projectile.width > enemy.currentX &&
                     projectile.currentY + enemy.currentY + enemy.height &&
                     projectile.currentY + projectile.height > enemy.currentY) {
-                        //console.log('HIT!!!!!!!!!')
+                        console.log('HIT!!!!!!!!!')
                         enemy.die()
                         gameStage.killCount += 1;
                     }
@@ -40,7 +40,7 @@ function spawnEnemy() {
     return setInterval(() => {
         if(gameStage.running) {
 
-            randX = (Math.random() * gameStage.leftBoundary)
+            randX = (Math.random() * gameStage.rightBoundary + 1)
             randY = (Math.random() * gameStage.bottomBoundary)
 
             let enemy = new Enemy ({randX, randY});
@@ -285,7 +285,6 @@ class Shell {
         this.shell.style.backgroundColor = 'orange'
         let projectileList = gameStage.projectiles;
         let projectitleIndex = projectileList.indexOf(this.id)
-        console.log(gameStage.projectiles[projectitleIndex])
 
         setTimeout(() => {
             
@@ -320,7 +319,7 @@ class Shell {
                 this.currentX += verlocityX;
                 this.currentY += verlocityY;
     
-                if((this.currentX * -1 >= this.destX || this.currentX >= gameStage.leftBoundary-10) ||
+                if((this.currentX * -1 >= this.destX || this.currentX >= gameStage.rightBoundary-10) ||
                     (this.currentY >= gameStage.bottomBoundary || this.currentY <= this.destY)) {
                     clearInterval(this.shellTravelTimer);
                     this.shellExplode()
@@ -351,7 +350,7 @@ class Enemy {
     width = 80;
     height = 60;
     travelPath = [
-        [ {x:0, y:100}, {x:400, y:500}, {x:800, y:200},{x: 1000, y: 400} ]
+        [ {x:300, y:100}, {x:400, y:200}, {x:800, y:200},{x: 1000, y: 400} ]
     ]
 
     constructor(spawnCoords, destCoords, id) {
@@ -362,19 +361,23 @@ class Enemy {
         this.soul.style.width = `${this.width}px`
         this.soul.style.height = `${this.height}px`
         this.soul.style.position = 'absolute';
+        this.soul.style.left = `${this.currentX}px`;
+        this.soul.style.top = `${this.currentY}px`;
         gameArea.append(this.soul)
         this.move()
         //this.die()
     }
 
     async move () {
-        this.soul.style.left = `${this.currentX}px`;
-        this.soul.style.top = `${this.currentY}px`;
-    
-        for (let i = 0; i < this.travelPath[0].length; i++) {
-            await this.Traverse(this.travelPath[0][i])
-        }
         
+    
+      
+            await this.Traverse(this.travelPath[0][0])
+            await this.Traverse(this.travelPath[0][1])
+            await this.Traverse(this.travelPath[0][2])
+            await this.Traverse(this.travelPath[0][3])
+
+   
     }
 
     die () {
@@ -387,7 +390,7 @@ class Enemy {
 
     Traverse (wayPoint) {
         console.log(wayPoint)
-        new Promise((resolve) => {
+        return new Promise((resolve) => {
             let toX = wayPoint.x;
             let toY = wayPoint.y;
             let distanX = (toX- this.currentX)
@@ -413,8 +416,8 @@ class Enemy {
                     this.currentX += verlocityX;
                     this.currentY += verlocityY;
         
-                    if((this.currentX * -1 >= this.toX || this.currentX >= gameStage.rightBoundary-10) ||
-                        (this.currentY >= gameStage.bottomBoundary || this.currentY <= this.toY)) {
+                    if((this.currentX * -1 >= this.toX || this.currentX >= gameStage.rightBoundary) ||
+                        (this.currentY >= gameStage.bottomBoundary)) {
                         clearInterval(flyTime);
                         this.die()
                     }
