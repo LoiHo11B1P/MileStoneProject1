@@ -1,6 +1,7 @@
 const gameArea = document.querySelector('#game-area');
 const shellCounter = document.querySelector('#shell-count');
 const killCounter = document.querySelector('#kill-count');
+const tankMagazine = document.querySelector('#tank-magazine');
 // hold attribute relate to the stage of the game
 const gameStage = {
     running: false,
@@ -25,10 +26,10 @@ function gamgeLoop () {
             gameStage.enemies.forEach((enemy) => {
                 // colision detection is learn from youtube video and credit to "Franks laboratory"
                 // https://www.youtube.com/watch?v=r0sy-Cr6WHY
-                if(projectile.currentX < enemy.currentX + enemy.width &&
-                    projectile.currentX + projectile.width > enemy.currentX &&
-                    projectile.currentY + enemy.currentY + enemy.height &&
-                    projectile.currentY + projectile.height > enemy.currentY) {
+                if(projectile.currentX <= enemy.currentX + enemy.width &&
+                    projectile.currentX + projectile.width >= enemy.currentX &&
+                    projectile.currentY <= enemy.currentY + enemy.height &&
+                    projectile.currentY + projectile.height >= enemy.currentY) {
                         //console.log('HIT!!!!!!!!!')
                         projectile.shellExplode()
                         enemy.die()
@@ -117,6 +118,7 @@ const player = {
     maxShell: 25,
     direction: 'right',
     prevDirection: 'right',
+    magazine: [],
 
     initPlayer() {
         this.tankTurret = document.createElement('img')
@@ -131,6 +133,7 @@ const player = {
         this.playerTank.style.width = `${this.width}px`
         this.playerTank.style.height = `${this.height}px`
         this.updateShellCount()
+        this.loadShell(this.shellCount)
         gameArea.append(this.playerTank)
         gameArea.append(this.tankTurret)
         this.updatePosition(100,this.positionY)
@@ -148,6 +151,16 @@ const player = {
         this.tankTurret.style.transform = `rotate(${this.turretAngle}deg)`;
         
         
+    },
+
+    loadShell(n) {
+        for(let i = 0; i < n; i++) {
+            let round = document.createElement('img');
+            round.setAttribute('src', 'resources/media/Bullet_3.png')
+            round.setAttribute('class', 'tank-round')
+            this.magazine.push(round)
+            tankMagazine.append(round)
+        }
     },
 
     tankAction(code) {
@@ -222,15 +235,21 @@ const player = {
 
     useShell() {
         this.shellCount--;
+        let round = this.magazine.pop()
+        round.remove()
         this.updateShellCount()
         this.moveTank()
     },
 
     reloadShell() {
         if(this.shellCount+10 > this.maxShell) {
-            this.shellCount = 25;
+            let rounds = this.maxShell - this.shellCount;
+            this.shellCount += rounds;
+            this.loadShell(rounds);
+
         } else {
-            this.shellCount+=10;
+            this.shellCount+=5;
+            this.loadShell(5);
         }
         
         this.updateShellCount()
@@ -281,8 +300,14 @@ class Shell {
         // type is use for enemy shell only
         this.currentX = spawnCoords.x + 30;
         this.currentY = spawnCoords.y;
-        this.destX = explodeCoord.x;
-        this.destY = explodeCoord.y-60;
+        if(type === 'enemy') {
+            this.destX = explodeCoord.x;
+            this.destY = explodeCoord.y;
+        } else {
+            this.destX = explodeCoord.x-80;
+            this.destY = explodeCoord.y-80;
+        }
+        
         this.type = type;
         this.speed = speed != null ? speed: 3;
         this.shell = document.createElement('img');
@@ -432,17 +457,18 @@ class Enemy {
     }
 
     async move () {
-        
-    
+
         this.fireShot()
-            await this.Traverse(this.travelPath[0][0])
-            clearInterval(this.flyTime)
-            await this.Traverse(this.travelPath[0][1])
-            clearInterval(this.flyTime)
-            await this.Traverse(this.travelPath[0][2])
-            clearInterval(this.flyTime)
-            await this.Traverse(this.travelPath[0][3])
-            clearInterval(this.flyTime)
+        await this.Traverse(this.travelPath[0][0])
+        console.log('move 1')
+        clearInterval(this.flyTime)
+        await this.Traverse(this.travelPath[0][1])
+        console.log('move 2')
+        clearInterval(this.flyTime)
+        await this.Traverse(this.travelPath[0][2])
+        clearInterval(this.flyTime)
+        await this.Traverse(this.travelPath[0][3])
+        clearInterval(this.flyTime)
 
    
     }

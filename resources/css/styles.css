@@ -53,6 +53,12 @@ body {
 user-select: none;
     
 }
+#tank-magazine {
+    display: inline-flex;   
+    background-color: rgb(27, 26, 26);
+    
+}
+
 .shell {
     width: 20px;
     height: 40px;
