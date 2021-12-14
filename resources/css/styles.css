@@ -15,24 +15,24 @@ body {
     padding: 10px;
 }
 #game-area{
-    margin: 0 auto;
     position: relative;
-    width: 100vw;
+    width: 95vw;
     height: 760px;
     /*background-color: cornflowerblue;*/
-    background-image: url('../media/bg.jpg');
-    background-repeat: no-repeat, repeat;
+    background-image: url('../media/ruincity_760.png');
+    background-repeat: no-repeat;
     background-size: cover; 
 }
 #game-ground {
-    width: 100vw;
+    margin: 0 auto;
+    width: 95vw;
     height: 40px;
     position: absolute;
     bottom: 100px;
     background-color: rgb(31, 78, 52);
 }
 #tank-control {
-    width: 100vw;
+    width: 95vw;
     height: 100px;
     background-color: brown;
     position: absolute;
@@ -46,6 +46,12 @@ body {
     position: absolute;
     bottom: 180px;
     border: 2px solid gold;
+    -webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-o-user-select: none;
+user-select: none;
+    
 }
 .shell {
     width: 20px;
@@ -55,5 +61,11 @@ body {
 }
 
 .enemy{
+    pointer-events: none;
     border: 2px solid red;
+    -webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-o-user-select: none;
+user-select: none;
 }
