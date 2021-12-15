@@ -23,22 +23,30 @@
         <div id="game-ground"></div>
         <div id="tank-control">
             <div class="container">
-                
                 <div class="row mb-2">
                     <div class='col-3'>
                     <div class="row">
                         <button class="btn btn-primary col-4" onclick='startPause(event)'>Start Game</button>
                     </div>
                     </div>
-                    <label class="col-3" id='kill-count'>Enemy Kill: 0</label>
+                    <div class="col-3">
+                        <div class="row">
+                            <label class="col-12" id='kill-count'>Enemy Kill: 0</label>
+                        </div>
+                        <div class="row">
+                            <label class="col-12" id='player-hp'>Health: 0</label>
+                        </div>
+
+                    </div>
                     <div class="col-6" id="tank-magazine"><label class="col-2" id='shell-count'>Count:</label></div>
                 </div>
-                
-                    
-                
             </div>
         </div>
     </div>
+   
+        <script src="./resources/js/shell.js"></script>
+        <script src="./resources/js/enemyShell.js" async defer></script>
+        <script src="./resources/js/enemy.js" async defer></script>
         <script src="./resources/js/main.js" async defer></script>
     </body>
 </html>

@@ -12,31 +12,37 @@ body {
 }
 #game-intro{
     text-align: center;
-    padding: 10px;
+    padding: 5px;
+}
+
+h1 {
+    font-size: 2em;
 }
 #game-area{
     position: relative;
     width: 95vw;
-    height: 760px;
+    height: 755px;
     /*background-color: cornflowerblue;*/
     background-image: url('../media/ruincity_760.png');
     background-repeat: no-repeat;
     background-size: cover; 
+    margin-bottom: 0;
 }
 #game-ground {
     margin: 0 auto;
+    margin-top: 0;
     width: 95vw;
     height: 40px;
     position: absolute;
-    bottom: 100px;
-    background-color: rgb(31, 78, 52);
+    bottom: 125px;
+    background-color: rgb(88, 57, 27);
 }
 #tank-control {
     width: 95vw;
     height: 100px;
     background-color: brown;
     position: absolute;
-    bottom: 0;
+    bottom: 50px;
     padding: 5px;
     color: white;
     font-size: 1.5em;
@@ -45,12 +51,12 @@ body {
     padding: 0;
     position: absolute;
     bottom: 180px;
-    border: 2px solid gold;
+    
     -webkit-user-select: none;
--khtml-user-select: none;
--moz-user-select: none;
--o-user-select: none;
-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
     
 }
 #tank-magazine {
@@ -70,8 +76,13 @@ user-select: none;
     pointer-events: none;
     border: 2px solid red;
     -webkit-user-select: none;
--khtml-user-select: none;
--moz-user-select: none;
--o-user-select: none;
-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+
+}
+.tank-round {
+    height: 3.5em;
+    width: auto;
 }

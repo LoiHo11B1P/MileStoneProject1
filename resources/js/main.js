@@ -1,53 +1,82 @@
+
+
 const gameArea = document.querySelector('#game-area');
 const shellCounter = document.querySelector('#shell-count');
 const killCounter = document.querySelector('#kill-count');
 const tankMagazine = document.querySelector('#tank-magazine');
+const playerHp = document.querySelector('#player-hp');
+
 // hold attribute relate to the stage of the game
 const gameStage = {
     running: false,
     leftBoundary: 0,
-    rightBoundary: gameArea.clientWidth - 10,
+    rightBoundary: gameArea.clientWidth - 20,
     topBoundary: 0,
-    bottomBoundary: gameArea.clientHeight - 40,
+    bottomBoundary: gameArea.clientHeight-60,
     projectiles: [],
     enemies: [],
     enemyShell: [],
     spawnEnemyTimer: null,
     killCount: 0,
     gameLoop: null,
+    shellColisionTimer: null,
+    enemyShellColisionTimer: null
     
 }
 
 function gamgeLoop () {
-    setInterval(() => {
-        if(gameStage.projectiles.length > 0 && gameStage.enemies.length > 0)
-        gameStage.projectiles.forEach((projectile) => {
-            
-            gameStage.enemies.forEach((enemy) => {
-                // colision detection is learn from youtube video and credit to "Franks laboratory"
-                // https://www.youtube.com/watch?v=r0sy-Cr6WHY
-                if(projectile.currentX <= enemy.currentX + enemy.width &&
-                    projectile.currentX + projectile.width >= enemy.currentX &&
-                    projectile.currentY <= enemy.currentY + enemy.height &&
-                    projectile.currentY + projectile.height >= enemy.currentY) {
-                        //console.log('HIT!!!!!!!!!')
-                        projectile.shellExplode()
-                        enemy.die()
-                        gameStage.killCount += 1;
-                    }
-               
-            })
-        }) 
-    }, 1);
+    // gameStage.shellColisionTimer = setInterval(() => {
+    //     // colision detection
+    //     if(gameStage.projectiles.length > 0 && gameStage.enemies.length > 0) {
+    //         gameStage.projectiles.forEach((projectile) => {
+    //             gameStage.enemies.forEach((enemy) => {
+    //                 // colision detection is learned from youtube video and credit to "Franks laboratory"
+    //                 // https://www.youtube.com/watch?v=r0sy-Cr6WHY
+    //                 if(projectile.currentX <= enemy.currentX + enemy.width &&
+    //                     projectile.currentX + projectile.width >= enemy.currentX &&
+    //                     projectile.currentY <= enemy.currentY + enemy.height &&
+    //                     projectile.currentY + projectile.height >= enemy.currentY) {
+    //                         //console.log('HIT!!!!!!!!!')
+    //                         projectile.shellExplode()
+    //                         enemy.die()
+    //                         gameStage.killCount += 1;
+    //                 }
+
+    //             })
+    //         }) 
+    //     }
+
+    // }, 1);
+
+    // gameStage.enemyShellColisionTimer = setInterval(() => {
+    //     if(gameStage.enemyShell.length > 0) {
+    //         gameStage.enemyShell.forEach(projectile => {
+    //             // colision detection is learned from youtube video and credit to "Franks laboratory"
+    //             // https://www.youtube.com/watch?v=r0sy-Cr6WHY
+    //             if(projectile.currentX <= player.positionX + player.width &&
+    //                 projectile.currentX + projectile.width >= player.positionX &&
+    //                 projectile.currentY <= player.positionY + player.height &&
+    //                 projectile.currentY + projectile.height >= player.positionY) {
+    //                     //console.log('HIT!!!!!!!!!')
+    //                     projectile.shellExplode()
+    //                     player.updatePlayerHP(-10)
+    //             }
+    //         })
+    //     }
+    // },1)
 }
 
 function alertAndWarning (msg, color) {
+    // use for showing warning message in middle of screen
+    // message would be removed in .5 sec
+    // can be any message or color
+
     let alertText = document.createElement('label')
     alertText.textContent = msg
-    alertText.style.fontSize = '15em'
+    alertText.style.fontSize = '10em'
     alertText.style.position = 'absolute'
     alertText.style.top = `${gameStage.bottomBoundary/2 -300}px`
-    alertText.style.left = `${gameStage.rightBoundary/2 - 500}px`
+    alertText.style.left = `${gameStage.rightBoundary/2 - 600}px`
     alertText.style.color = color
     gameArea.append(alertText) 
     setTimeout(() => {
@@ -56,7 +85,7 @@ function alertAndWarning (msg, color) {
 }
 
 function spawnEnemy() {
-    return setInterval(() => {
+    gameStage.spawnEnemyTimer = setInterval(() => {
         if(gameStage.running) {
 
             randX = (Math.random() * gameStage.rightBoundary + 1)
@@ -77,20 +106,14 @@ function startPause(e) {
    
     if(!gameStage.running) {
         e.target.style.backgroundColor = 'orange'
-        clearInterval(gameLoop)
+        clearInterval(gameStage.spawnEnemyTimer)
+        clearInterval(gameStage.shellColisionTimer)
+        clearInterval(gameStage.enemyShellColisionTimer)
     } else {
         e.target.style.backgroundColor ='green'
-        gameLoop = gamgeLoop()
+        //gameStage.gameLoop = gamgeLoop()
         spawnEnemy()
     }
-}
-
-// position of mouseclick serve as aim point for projectile
-function aimPoint(e) {
-    //console.log(e)
-    //player.adjustAimPoint(e.clientX, e.clientY)
-    
-
 }
 
 // listen for key press to take action
@@ -119,6 +142,7 @@ const player = {
     direction: 'right',
     prevDirection: 'right',
     magazine: [],
+    hp: 1000,
 
     initPlayer() {
         this.tankTurret = document.createElement('img')
@@ -137,6 +161,15 @@ const player = {
         gameArea.append(this.playerTank)
         gameArea.append(this.tankTurret)
         this.updatePosition(100,this.positionY)
+        this.updatePlayerHP()
+    },
+
+    updatePlayerHP (life) {
+        if(life) {
+            this.hp += life;
+        }
+        
+        playerHp.textContent = `Health: ${this.hp}`
     },
 
     adjustAimPoint(x,y) {
@@ -184,7 +217,7 @@ const player = {
     },
 
     updatePosition (x,y) {
-        if(x < gameStage.rightBoundary-10 && x > 0) {
+        if(x < gameStage.rightBoundary-60 && x > 0) {
             this.positionX = x;
             this.positionY = y;
        }
@@ -265,7 +298,7 @@ player.initPlayer()
 
 // Mouse action
 gameArea.addEventListener('click', (e) => {
-    
+    // listen for click to fire shell
     if(gameStage.running) {
         if(player.shellCount - 1 >= 0) {
             let shell = new Shell({x: player.positionX, y: player.positionY}, {x: e.x, y: e.y})
@@ -281,269 +314,3 @@ gameArea.addEventListener('click', (e) => {
 
 })
 
-// Projectiles
-
-class Shell {
-    shell = null
-    shellTravelTimer = null
-    currentX = null
-    currentY = null
-    speed = 3
-    width = 20
-    height = 20
-    type = null
-    id = null
-
-    constructor(spawnCoords, explodeCoord, type, speed) {
-        // spawnCoord will be at tank position x & y
-        // explodeCoord will be where the mouse is click
-        // type is use for enemy shell only
-        this.currentX = spawnCoords.x + 30;
-        this.currentY = spawnCoords.y;
-        if(type === 'enemy') {
-            this.destX = explodeCoord.x;
-            this.destY = explodeCoord.y;
-        } else {
-            this.destX = explodeCoord.x-80;
-            this.destY = explodeCoord.y-80;
-        }
-        
-        this.type = type;
-        this.speed = speed != null ? speed: 3;
-        this.shell = document.createElement('img');
-        //this.shell.setAttribute('class', 'shell');
-        this.shell.style.width = `${this.width}px`;
-        this.shell.style.height = `${this.height}px`;
-        this.shell.style.border = "2px solid green"
-        this.shell.style.borderRadius = "90%"
-        this.shell.style.backgroundColor = 'red';
-        this.shell.style.position = 'absolute';
-        this.shell.style.left = `${this.currentX}px`;
-        this.shell.style.top = `${this.currentY}px`;
-        //console.log(`bullet @ x:${spawnCoords.x}, y:${spawnCoords.y}`)
-        gameArea.append(this.shell)
-        this.shellTravel(this.type)
-        //this.shellExplode()
-        
-    }
-
-    shellExplode() {
-        let projectileList;
-        this.width = 100
-        this.height = 100
-        this.shell.style.width = `${this.width}px`
-        this.shell.style.height = `${this.height}px`
-        this.shell.style.border = ""
-        this.shell.style.borderRadius = "0%"
-        this.shell.style.backgroundColor = ''
-        this.shell.setAttribute('src', 'resources/media/explode.png')
-        if(this.type === 'enemy') {
-            projectileList = gameStage.enemyShell;
-        } else {
-            projectileList = gameStage.projectiles;
-        }
-         
-        let projectitleIndex = projectileList.indexOf(this.id)
-
-        setTimeout(() => {
-            
-            projectileList.splice(projectitleIndex,1)
-            this.shell.remove()
-            //console.log(gameStage.projectiles)
-        }, 250);
-        
-            
-    }
-
-    shellTravel(type) {
-        // the flight path should be distance x/4000, distance y/4000
-        let distanX = (this.destX - this.currentX)
-        let distanY = (this.destY - this.currentY)
-
-        let angle = Math.atan2(distanY, distanX)
-        
-        let aimAngle = angle*180/Math.PI
-        //console.log(aimAngle)
-        
-        // if aim angle is not more than -80 or less than -120 do not move the turret or let bullet fly
-        if((aimAngle < 0  && aimAngle > -180) || type === 'enemy' ) {
-            
-            player.turretAngle = aimAngle
-
-            let verlocityX = Math.cos(angle)*this.speed
-            let verlocityY = Math.sin(angle)*this.speed
-    
-            this.shellTravelTimer = setInterval(() => {
-    
-                this.currentX += verlocityX;
-                this.currentY += verlocityY;
-    
-                if((this.currentX == this.destX && this.currentY == this.destY) || this.currentX >= gameStage.rightBoundary-10 ||
-                    this.currentY >= gameStage.bottomBoundary || this.currentY < 0) {
-                    clearInterval(this.shellTravelTimer);
-                    this.shellExplode()
-                }
-    
-                this.shell.style.left = `${this.currentX}px`;
-                this.shell.style.top = `${this.currentY}px`;
-                // gameStage.enemies.forEach((enemy) => {
-                // if(this.currentX < enemy.currentX + enemy.width &&
-                //     this.currentX + this.width > enemy.currentX &&
-                //     this.currentY + enemy.currentY + enemy.height &&
-                //     this.currentY + this.height > enemy.currentY) {
-                //         console.log('HIT!!!!!!!!!')
-                //         clearInterval(this.shellTravelTimer);
-                //         this.shellExplode()
-                //         enemy.die()
-                //         gameStage.killCount += 1;
-                //     }
-                // })
-            }, 1);
-            
-        } else {
-            this.shell.remove()
-        }
-
-       
-    }
-}
-
-class EnemyShell extends Shell {
-    
-
-    constructor(spawnCoords, explodeCoord) {
-        super(spawnCoords, explodeCoord, 'enemy', 1)
-        this.shell.style.border = "2px solid orange"
-        this.shell.style.borderRadius = "90%"
-        this.shell.style.backgroundColor = 'purple';
-        
-        
-    }
-    
-}
-
-// Enemy
-
-class Enemy {
-    currentX = 0;
-    currentY = 0;
-    hp = 10;
-    id = null;
-    speed = .5;
-    soul = null;
-    width = 80;
-    height = 60;
-    flyTime = null;
-    firingTimer = null;
-    travelPath = [
-        [ {x:300, y:100}, {x:400, y:200}, {x:800, y:200},{x: 1000, y: 400} ]
-    ]
-
-    constructor(spawnCoords, destCoords, id) {
-        this.currentX = spawnCoords.randX;
-        this.currentY = spawnCoords.randY;
-        this.soul = document.createElement('img')
-        this.soul.setAttribute('src', 'resources/media/chopper1.gif')
-        this.soul.setAttribute('draggable', false);
-        this.soul.style.width = `${this.width}px`
-        this.soul.style.height = `${this.height}px`
-        this.soul.style.position = 'absolute';
-        this.soul.style.left = `${this.currentX}px`;
-        this.soul.style.top = `${this.currentY}px`;
-        gameArea.append(this.soul)
-        this.move()
-        
-       
-    }
-
-    async move () {
-
-        this.fireShot()
-        await this.Traverse(this.travelPath[0][0])
-        console.log('move 1')
-        clearInterval(this.flyTime)
-        await this.Traverse(this.travelPath[0][1])
-        console.log('move 2')
-        clearInterval(this.flyTime)
-        await this.Traverse(this.travelPath[0][2])
-        clearInterval(this.flyTime)
-        await this.Traverse(this.travelPath[0][3])
-        clearInterval(this.flyTime)
-
-   
-    }
-
-    die () {
-        setTimeout(() =>{
-            clearInterval(this.firingTimer)
-            clearInterval(this.flyTime)
-            let index = gameStage.enemies.indexOf(this.id)
-            gameStage.enemies.splice(index, 1)
-            this.soul.remove();
-        }, 50)
-    }
-
-    Traverse (wayPoint) {
-        ///console.log(wayPoint)
-        return new Promise((resolve) => {
-            let toX = wayPoint.x;
-            let toY = wayPoint.y;
-            let distanX = (toX- this.currentX)
-            let distanY = (toY - this.currentY)
-
-            let angle = Math.atan2(distanY, distanX)
-        
-            let aimAngle = angle*180/Math.PI
-
-            if(distanX < 0) {
-                this.soul.style.transform = `rotateY(180deg)`
-            } else {
-                this.soul.style.transform = `rotateY(0deg)`
-            }
-        
-            let verlocityX = Math.cos(angle)*this.speed
-            let verlocityY = Math.sin(angle)*this.speed
-            let rotation = 1
-            this.flyTime = setInterval(() => {
-                if(gameStage.running) {
-                    let img = `resources/media/chopper${rotation}.gif`
-                    this.soul.setAttribute('src', img)
-                    
-                    if(rotation+1 > 5) {
-                        rotation = 1
-                    } else {
-                        rotation ++
-                    }
-                    this.currentX += verlocityX;
-                    this.currentY += verlocityY;
-        
-                    if(this.currentX >= gameStage.rightBoundary || this.currentX <= 0 ||
-                        this.currentY >= gameStage.bottomBoundary || this.currentY < gameStage.topBoundary) {
-                            
-                        this.die()
-                    }
-        
-                    this.soul.style.left = `${this.currentX}px`;
-                    this.soul.style.top = `${this.currentY}px`;
-                }
-                    
-            }, 1);
-        })
-        
-            
-      
-    }
-
-    fireShot () {
-        this.firingTimer = setInterval(() => {
-            if(gameStage.running) {
-                let shell = new EnemyShell({x: this.currentX, y: this.currentY}, {x: player.positionX, y: player.positionY})
-               
-                shell.id = this.currentX+'enemyShell'+gameStage.enemyShell.length
-                
-                gameStage.enemyShell.push(shell)
-                
-            }
-        }, 1500);
-    }
-}
