@@ -35,16 +35,19 @@ class Enemy {
     async move () {
 
         this.fireShot()
-        await this.Traverse(this.travelPath[0][0])
-        console.log('move 1')
+       
+            await this.Traverse(this.travelPath[0][0])
+        //console.log('move 1')
         clearInterval(this.flyTime)
         await this.Traverse(this.travelPath[0][1])
-        console.log('move 2')
+        //console.log('move 2')
         clearInterval(this.flyTime)
         await this.Traverse(this.travelPath[0][2])
         clearInterval(this.flyTime)
         await this.Traverse(this.travelPath[0][3])
         clearInterval(this.flyTime)
+        this.die()
+        
 
    
     }
@@ -93,10 +96,10 @@ class Enemy {
                     this.currentX += verlocityX;
                     this.currentY += verlocityY;
         
-                    if(this.currentX >= gameStage.rightBoundary || this.currentX <= 0 ||
+                    if(this.currentX >= gameStage.rightBoundary - 80 || this.currentX <= 0 ||
                         this.currentY >= gameStage.bottomBoundary || this.currentY < gameStage.topBoundary) {
-                            
-                        this.die()
+                        resolve()    
+                        
                     }
         
                     this.soul.style.left = `${this.currentX}px`;
