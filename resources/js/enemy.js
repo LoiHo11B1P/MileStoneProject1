@@ -12,7 +12,7 @@ class Enemy {
     flyTime = null;
     firingTimer = null;
     travelPath = [
-        [ {x:300, y:100}, {x:400, y:200}, {x:800, y:200},{x: 1000, y: 400} ]
+        [ {x:300, y:100}, {x:600, y:400}, {x:900, y:300},{x: 1100, y: 200} ]
     ]
 
     constructor(spawnCoords, destCoords, id) {

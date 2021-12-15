@@ -97,7 +97,7 @@ function spawnEnemy() {
             killCounter.textContent = `Enemy Killed: ${gameStage.killCount}`
             //console.log(gameStage.enemies)
         }
-    }, 2500)
+    }, 3000)
 }
 
 // toggle start or pause game
