@@ -5,6 +5,13 @@ const shellCounter = document.querySelector('#shell-count');
 const killCounter = document.querySelector('#kill-count');
 const tankMagazine = document.querySelector('#tank-magazine');
 const playerHp = document.querySelector('#player-hp');
+const menuBoard = document.querySelector('#menu-board');
+
+
+function closeMenu () {
+    menuBoard.style.display = "none"
+}
+
 
 // hold attribute relate to the stage of the game
 const gameStage = {
@@ -22,6 +29,25 @@ const gameStage = {
     shellColisionTimer: null,
     enemyShellColisionTimer: null
     
+}
+
+async function gameEnd () {
+    // set game state to pause,
+    // clear all array and timer
+    
+    gameStage.enemies.forEach(enemy => {
+        enemy.die()
+        
+    })
+    gameStage.projectiles.forEach(shell => {
+        shell.shellExplode();
+        
+    })
+    gameStage.enemyShell.forEach(shell => {
+        shell.shellExplode();
+    })
+    gameStage.running = false;
+    pauseGame();
 }
 
 function gamgeLoop () {
@@ -105,24 +131,72 @@ function startPause(e) {
     gameStage.running = !gameStage.running;
    
     if(!gameStage.running) {
-        e.target.style.backgroundColor = 'orange'
-        clearInterval(gameStage.spawnEnemyTimer)
-        clearInterval(gameStage.shellColisionTimer)
-        clearInterval(gameStage.enemyShellColisionTimer)
+        // game in pause state, all timer clear and resume button is available
+        menuBoard.style.display = "block"
+        e.target.style.backgroundColor = 'green'
+        e.target.textContent = "Resume"
+        pauseGame()
+        
     } else {
-        e.target.style.backgroundColor ='green'
+        // game in run state
+        e.target.style.backgroundColor ='orange'
+        e.target.textContent = "Pause"
         //gameStage.gameLoop = gamgeLoop()
         spawnEnemy()
     }
 }
 
+function pauseGame () {
+    clearInterval(gameStage.spawnEnemyTimer)
+    clearInterval(gameStage.shellColisionTimer)
+    clearInterval(gameStage.enemyShellColisionTimer)
+}
+
 // listen for key press to take action
 document.addEventListener('keydown', e => {
+
     if (gameStage.running) {
         player.tankAction(e.key)
     }
     
 })
+
+
+// target cursor
+const targetCursor = {
+    currentX: 0,
+    currentY: 0,
+    cursor: null,
+
+    targetCursorInit() {
+        this.cursor = document.createElement('img');
+        this.cursor.setAttribute('src', 'resources/media/circle-042.png');
+        this.cursor.setAttribute('id', 'target-cursor')
+        this.cursor.setAttribute('draggable', false);
+        this.cursor.style.width = '30px';
+        this.cursor.style.height = '30px';
+        gameArea.append(this.cursor);
+        this.moveCursor()
+    },
+
+    moveCursor () {
+        setInterval( () =>
+            {
+                this.cursor.style.left = `${this.currentX-90}px`;
+                this.cursor.style.top = `${this.currentY-90}px`;
+            }, 1
+
+        )
+        
+    }
+
+}
+targetCursor.targetCursorInit()
+
+function mouseCoord(e) {
+    targetCursor.currentX = e.pageX;
+    targetCursor.currentY = e.pageY;
+}
 
 // Play Tank
 const player = {
@@ -147,29 +221,34 @@ const player = {
     initPlayer() {
         this.tankTurret = document.createElement('img')
         this.tankTurret.setAttribute('src','resources/media/gun.gif')
-        this.tankTurret.style.position = 'absolute';
-        this.tankTurret.zIndex = '-1'
+        this.tankTurret.setAttribute('id', 'tank-turret');
+        this.tankTurret.setAttribute('draggable', false);
+
         this.playerTank = document.createElement('img')
         this.playerTank.setAttribute('src','resources/media/tank.gif')
         this.playerTank.setAttribute('draggable', false);
-        this.tankTurret.setAttribute('draggable', false)
-        this.playerTank.setAttribute('id', 'player-tank')
-        this.playerTank.style.width = `${this.width}px`
-        this.playerTank.style.height = `${this.height}px`
-        this.updateShellCount()
-        this.loadShell(this.shellCount)
-        gameArea.append(this.playerTank)
-        gameArea.append(this.tankTurret)
-        this.updatePosition(100,this.positionY)
-        this.updatePlayerHP()
+        this.playerTank.setAttribute('id', 'player-tank');
+        this.playerTank.style.width = `${this.width}px`;
+        this.playerTank.style.height = `${this.height}px`;
+
+        this.updateShellCount();
+        this.loadShell(this.shellCount);
+        gameArea.append(this.playerTank);
+        gameArea.append(this.tankTurret);
+        this.updatePosition(100,this.positionY);
+        this.updatePlayerHP();
     },
 
     updatePlayerHP (life) {
         if(life) {
             this.hp += life;
         }
-        
         playerHp.textContent = `Health: ${this.hp}`
+
+        if(this.hp <= 0) {
+            gameEnd();
+        }
+        
     },
 
     adjustAimPoint(x,y) {

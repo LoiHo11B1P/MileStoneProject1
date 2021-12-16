@@ -18,7 +18,7 @@
             <h1>Tank-em</h1>
         </div>
         <div class="d-flex justify-content-center">
-        <div id="game-area">          
+        <div id="game-area" onmousemove="mouseCoord(event)">          
         </div>
         <div id="game-ground"></div>
         <div id="tank-control">
@@ -43,10 +43,46 @@
             </div>
         </div>
     </div>
-   
+        <!-- Modal From Bootstrap to display game score -->
+    <div id="menu-board" class="">
+        <div id="menu-content" class="container">
+            <div class="row ">
+                <div class="col">
+            <div class="row justify-content-lg-center">
+                <div class="col-12">
+                <h1>Leader Board</h1>
+                </div>
+                <div class="col-12">
+                    <p id="intro-p">Fight to the end! Many had fought for glory. Will you make history?</p>
+                    <p id="dead-p">You have long peace, now rest in peace...Or born and fight again! For Glory!!!</p>
+                </div>
+                <div class="col-6">
+                    <label for="player-name">Name</label>
+                    <input type="text" id="player-name" maxlength="4">
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-primary">Retired</button>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-3">
+                <button class="btn btn-warning" onclick="closeMenu()">Close</button>
+            </div>   
+            </div>
+            </div> 
+             </div>  
+        </div>
+    </div>
+        
         <script src="./resources/js/shell.js"></script>
         <script src="./resources/js/enemyShell.js" async defer></script>
-        <script src="./resources/js/enemy.js" async defer></script>
-        <script src="./resources/js/main.js" async defer></script>
+        <script src="./resources/js/enemy.js" async></script>
+        <script src="./resources/js/main.js"></script>
+        
+        
+        
     </body>
+    
+
 </html>

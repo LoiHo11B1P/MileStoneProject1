@@ -1,5 +1,4 @@
 
-
 class Enemy {
     currentX = 0;
     currentY = 0;

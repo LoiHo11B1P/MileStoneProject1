@@ -13,4 +13,9 @@ Browser game
 
 
 Credit:
-https://opengameart.org/content/game-art-packs
+
+Arts use in game are from the following creator:
+
+1. Open Gunner Art package by Master484: http://m484games.ucoz.com/
+2. Free World War Game Theme: https://opengameart.org/content/free-world-war-game-theme
+3. Crosshair Pack: https://opengameart.org/content/20-crosshairs-for-re
