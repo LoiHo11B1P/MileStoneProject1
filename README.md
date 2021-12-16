@@ -1,8 +1,8 @@
 # MileStoneProject1
 Browser game
 1. Build out project structure  - completed
-2. Determine type of game to focus on -
-3. Plan out needed resources -
+2. Determine type of game to focus on - tank air defense
+3. Plan out needed resources - 
 4. Determine game features - 
 4. Work on protype -
 5. Trivial working game -

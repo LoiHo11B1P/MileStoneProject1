@@ -1,17 +1,37 @@
-
-
 const gameArea = document.querySelector('#game-area');
 const shellCounter = document.querySelector('#shell-count');
 const killCounter = document.querySelector('#kill-count');
 const tankMagazine = document.querySelector('#tank-magazine');
 const playerHp = document.querySelector('#player-hp');
 const menuBoard = document.querySelector('#menu-board');
+const playerName = document.querySelector('#player-name');
+// const retireBtn = document.querySelector('#retired');
+// const rebornBtn = document.querySelector('#reborn');
 
+function localStorage () {
+    if(JSON.parse(window.localStorage.getItem('scores')) !== null) {
+        console.log(JSON.parse(localStorage.getItem('scores')))
+    } else {
+        let scoreList = JSON.parse(localStorage.getItem('scores') ||  '[]');
+        scoreList.push(score);
+    }
+}
 
-function closeMenu () {
+function closeMenu() {
     menuBoard.style.display = "none"
 }
 
+function Retired() {
+    let name = playerName.value;
+    console.log(name)
+    console.log(gameStage.killCount)
+    let score = {
+        player: name,
+        point: gameStage.killCount
+    }
+    playerName.value = ''
+    localStorage(score)
+}
 
 // hold attribute relate to the stage of the game
 const gameStage = {
@@ -19,7 +39,7 @@ const gameStage = {
     leftBoundary: 0,
     rightBoundary: gameArea.clientWidth - 20,
     topBoundary: 0,
-    bottomBoundary: gameArea.clientHeight-60,
+    bottomBoundary: gameArea.clientHeight - 60,
     projectiles: [],
     enemies: [],
     enemyShell: [],
@@ -28,71 +48,44 @@ const gameStage = {
     gameLoop: null,
     shellColisionTimer: null,
     enemyShellColisionTimer: null
-    
+
 }
 
-async function gameEnd () {
+async function gameEnd() {
     // set game state to pause,
     // clear all array and timer
-    
-    gameStage.enemies.forEach(enemy => {
-        enemy.die()
-        
+    const destroyEnemy = new Promise(resolve => {
+        gameStage.enemies.forEach(enemy => {
+            enemy.die();
+
+        })
+        resolve()
     })
-    gameStage.projectiles.forEach(shell => {
-        shell.shellExplode();
-        
+
+    const destroyShell = new Promise(resolve => {
+        gameStage.projectiles.forEach(shell => {
+            shell.shellExplode();
+
+        })
+        resolve()
     })
-    gameStage.enemyShell.forEach(shell => {
-        shell.shellExplode();
+
+    const destroyEnemyShell = new Promise(resolve => {
+        gameStage.enemyShell.forEach(shell => {
+            shell.shellExplode();
+        })
+        resolve()
     })
-    gameStage.running = false;
-    pauseGame();
+
+    Promise.all([destroyEnemy, destroyShell, destroyEnemyShell])
+        .then(() => {
+            gameStage.running = false;
+            pauseGame();
+        })
+
 }
 
-function gamgeLoop () {
-    // gameStage.shellColisionTimer = setInterval(() => {
-    //     // colision detection
-    //     if(gameStage.projectiles.length > 0 && gameStage.enemies.length > 0) {
-    //         gameStage.projectiles.forEach((projectile) => {
-    //             gameStage.enemies.forEach((enemy) => {
-    //                 // colision detection is learned from youtube video and credit to "Franks laboratory"
-    //                 // https://www.youtube.com/watch?v=r0sy-Cr6WHY
-    //                 if(projectile.currentX <= enemy.currentX + enemy.width &&
-    //                     projectile.currentX + projectile.width >= enemy.currentX &&
-    //                     projectile.currentY <= enemy.currentY + enemy.height &&
-    //                     projectile.currentY + projectile.height >= enemy.currentY) {
-    //                         //console.log('HIT!!!!!!!!!')
-    //                         projectile.shellExplode()
-    //                         enemy.die()
-    //                         gameStage.killCount += 1;
-    //                 }
-
-    //             })
-    //         }) 
-    //     }
-
-    // }, 1);
-
-    // gameStage.enemyShellColisionTimer = setInterval(() => {
-    //     if(gameStage.enemyShell.length > 0) {
-    //         gameStage.enemyShell.forEach(projectile => {
-    //             // colision detection is learned from youtube video and credit to "Franks laboratory"
-    //             // https://www.youtube.com/watch?v=r0sy-Cr6WHY
-    //             if(projectile.currentX <= player.positionX + player.width &&
-    //                 projectile.currentX + projectile.width >= player.positionX &&
-    //                 projectile.currentY <= player.positionY + player.height &&
-    //                 projectile.currentY + projectile.height >= player.positionY) {
-    //                     //console.log('HIT!!!!!!!!!')
-    //                     projectile.shellExplode()
-    //                     player.updatePlayerHP(-10)
-    //             }
-    //         })
-    //     }
-    // },1)
-}
-
-function alertAndWarning (msg, color) {
+function alertAndWarning(msg, color) {
     // use for showing warning message in middle of screen
     // message would be removed in .5 sec
     // can be any message or color
@@ -104,7 +97,7 @@ function alertAndWarning (msg, color) {
     alertText.style.top = `${gameStage.bottomBoundary/2 -300}px`
     alertText.style.left = `${gameStage.rightBoundary/2 - 600}px`
     alertText.style.color = color
-    gameArea.append(alertText) 
+    gameArea.append(alertText)
     setTimeout(() => {
         alertText.remove()
     }, 500);
@@ -112,13 +105,16 @@ function alertAndWarning (msg, color) {
 
 function spawnEnemy() {
     gameStage.spawnEnemyTimer = setInterval(() => {
-        if(gameStage.running) {
+        if (gameStage.running) {
 
             randX = (Math.random() * gameStage.rightBoundary + 1)
             randY = (Math.random() * gameStage.bottomBoundary)
 
-            let enemy = new Enemy ({randX, randY});
-            enemy.id = randX+'shell'+gameStage.enemies.length
+            let enemy = new Enemy({
+                randX,
+                randY
+            });
+            enemy.id = randX + 'shell' + gameStage.enemies.length
             gameStage.enemies.push(enemy)
             killCounter.textContent = `Enemy Killed: ${gameStage.killCount}`
             //console.log(gameStage.enemies)
@@ -129,24 +125,24 @@ function spawnEnemy() {
 // toggle start or pause game
 function startPause(e) {
     gameStage.running = !gameStage.running;
-   
-    if(!gameStage.running) {
+
+    if (!gameStage.running) {
         // game in pause state, all timer clear and resume button is available
         menuBoard.style.display = "block"
         e.target.style.backgroundColor = 'green'
         e.target.textContent = "Resume"
         pauseGame()
-        
+
     } else {
         // game in run state
-        e.target.style.backgroundColor ='orange'
+        e.target.style.backgroundColor = 'orange'
         e.target.textContent = "Pause"
         //gameStage.gameLoop = gamgeLoop()
         spawnEnemy()
     }
 }
 
-function pauseGame () {
+function pauseGame() {
     clearInterval(gameStage.spawnEnemyTimer)
     clearInterval(gameStage.shellColisionTimer)
     clearInterval(gameStage.enemyShellColisionTimer)
@@ -158,7 +154,7 @@ document.addEventListener('keydown', e => {
     if (gameStage.running) {
         player.tankAction(e.key)
     }
-    
+
 })
 
 
@@ -179,15 +175,14 @@ const targetCursor = {
         this.moveCursor()
     },
 
-    moveCursor () {
-        setInterval( () =>
-            {
+    moveCursor() {
+        setInterval(() => {
                 this.cursor.style.left = `${this.currentX-90}px`;
                 this.cursor.style.top = `${this.currentY-90}px`;
             }, 1
 
         )
-        
+
     }
 
 }
@@ -200,8 +195,8 @@ function mouseCoord(e) {
 
 // Play Tank
 const player = {
-    aimPointX:  0,
-    aimPointY:  0,
+    aimPointX: 0,
+    aimPointY: 0,
     positionX: 100,
     positionY: gameArea.clientHeight - 60,
     prevX: 100,
@@ -220,12 +215,12 @@ const player = {
 
     initPlayer() {
         this.tankTurret = document.createElement('img')
-        this.tankTurret.setAttribute('src','resources/media/gun.gif')
+        this.tankTurret.setAttribute('src', 'resources/media/gun.gif')
         this.tankTurret.setAttribute('id', 'tank-turret');
         this.tankTurret.setAttribute('draggable', false);
 
         this.playerTank = document.createElement('img')
-        this.playerTank.setAttribute('src','resources/media/tank.gif')
+        this.playerTank.setAttribute('src', 'resources/media/tank.gif')
         this.playerTank.setAttribute('draggable', false);
         this.playerTank.setAttribute('id', 'player-tank');
         this.playerTank.style.width = `${this.width}px`;
@@ -235,38 +230,38 @@ const player = {
         this.loadShell(this.shellCount);
         gameArea.append(this.playerTank);
         gameArea.append(this.tankTurret);
-        this.updatePosition(100,this.positionY);
+        this.updatePosition(100, this.positionY);
         this.updatePlayerHP();
     },
 
-    updatePlayerHP (life) {
-        if(life) {
+    updatePlayerHP(life) {
+        if (life) {
             this.hp += life;
         }
         playerHp.textContent = `Health: ${this.hp}`
 
-        if(this.hp <= 0) {
+        if (this.hp <= 0) {
             gameEnd();
         }
-        
+
     },
 
-    adjustAimPoint(x,y) {
+    adjustAimPoint(x, y) {
         this.aimPointX = x;
         this.aimPointY = y;
         let distanX = (this.aimPointX - this.currentX)
         let distanY = (this.aimPointY - this.currentY)
 
         let angle = Math.atan2(distanY, distanX)
-        
-        this.turretAngle = angle*180/Math.PI
+
+        this.turretAngle = angle * 180 / Math.PI
         this.tankTurret.style.transform = `rotate(${this.turretAngle}deg)`;
-        
-        
+
+
     },
 
     loadShell(n) {
-        for(let i = 0; i < n; i++) {
+        for (let i = 0; i < n; i++) {
             let round = document.createElement('img');
             round.setAttribute('src', 'resources/media/Bullet_3.png')
             round.setAttribute('class', 'tank-round')
@@ -278,11 +273,11 @@ const player = {
     tankAction(code) {
         switch (code) {
             case 'a':
-                this.updatePosition(this.positionX-10, this.positionY)
+                this.updatePosition(this.positionX - 10, this.positionY)
                 this.direction = 'left'
                 break;
             case 'd':
-                this.updatePosition(this.positionX+10, this.positionY)
+                this.updatePosition(this.positionX + 10, this.positionY)
                 this.direction = 'right'
                 break
             case 'r':
@@ -292,41 +287,41 @@ const player = {
                 console.log(`do nothing`)
         }
 
-    
+
     },
 
-    updatePosition (x,y) {
-        if(x < gameStage.rightBoundary-60 && x > 0) {
+    updatePosition(x, y) {
+        if (x < gameStage.rightBoundary - 60 && x > 0) {
             this.positionX = x;
             this.positionY = y;
-       }
-        
+        }
+
         this.moveTank()
-        
+
     },
 
-    moveTank () {
-        
-        
+    moveTank() {
+
+
         // rotate tank and turret to face the direction of travel
-        if(this.direction === 'left')  {
+        if (this.direction === 'left') {
             this.playerTank.style.transform = `rotateY(180deg)`
             //this.tankTurret.style.transform = `rotateY(180deg)`
-            if(this.prevDirection != 'left') {
+            if (this.prevDirection != 'left') {
                 this.turretAngle -= 90
                 this.tankTurret.style.transform = `rotate(${this.turretAngle}deg)`;
                 this.prevDirection = this.direction
             }
             this.tankTurret.style.left = `${this.positionX+25}px`;
             this.tankTurret.style.top = `${this.positionY+10}px`;
-            
-            
+
+
         }
-        if(this.direction === 'right') {
+        if (this.direction === 'right') {
             this.playerTank.style.transform = `rotateY(0deg)`
             this.tankTurret.style.transform = `rotateY(0deg)`
-            if(this.prevDirection != 'right') {
-                this.turretAngle += 90 
+            if (this.prevDirection != 'right') {
+                this.turretAngle += 90
                 this.tankTurret.style.transform = `rotate(${this.turretAngle}deg)`;
                 this.prevDirection = this.direction
             }
@@ -335,11 +330,11 @@ const player = {
         }
 
         // only rotate turret if we change direction
-        if(this.direction === this.prevDirection) {
+        if (this.direction === this.prevDirection) {
             this.tankTurret.style.transform = `rotate(${this.turretAngle}deg)`;
         }
-        
-        
+
+
         this.prevX = this.positionX
         this.playerTank.style.left = `${this.positionX}px`;
         this.playerTank.style.top = `${this.positionY}px`;
@@ -354,23 +349,23 @@ const player = {
     },
 
     reloadShell() {
-        if(this.shellCount+10 > this.maxShell) {
+        if (this.shellCount + 10 > this.maxShell) {
             let rounds = this.maxShell - this.shellCount;
             this.shellCount += rounds;
             this.loadShell(rounds);
 
         } else {
-            this.shellCount+=5;
+            this.shellCount += 5;
             this.loadShell(5);
         }
-        
+
         this.updateShellCount()
-        
+
     },
 
     updateShellCount() {
         shellCounter.textContent = `Shell: ${this.shellCount}`
-        
+
     }
 }
 player.initPlayer()
@@ -378,18 +373,25 @@ player.initPlayer()
 // Mouse action
 gameArea.addEventListener('click', (e) => {
     // listen for click to fire shell
-    if(gameStage.running) {
-        if(player.shellCount - 1 >= 0) {
-            let shell = new Shell({x: player.positionX, y: player.positionY}, {x: e.x, y: e.y})
+    if (gameStage.running) {
+        if (player.shellCount - 1 >= 0) {
+
+            let shell = new Shell({
+                x: player.positionX,
+                y: player.positionY
+            }, {
+                x: e.x,
+                y: e.y
+            })
             player.useShell()
-            shell.id = e.x+'shell'+gameStage.projectiles.length
+            shell.id = e.x + 'shell' + gameStage.projectiles.length
             gameStage.projectiles.push(shell)
+
         } else {
             alertAndWarning('RELOAD! RELOAD!', 'red')
         }
-        
-        
+
+
     }
 
 })
-

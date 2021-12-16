@@ -27,8 +27,7 @@ class Enemy {
         this.soul.style.top = `${this.currentY}px`;
         gameArea.append(this.soul)
         this.move()
-        
-       
+
     }
 
     async move () {
