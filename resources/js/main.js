@@ -5,16 +5,55 @@ const tankMagazine = document.querySelector('#tank-magazine');
 const playerHp = document.querySelector('#player-hp');
 const menuBoard = document.querySelector('#menu-board');
 const playerName = document.querySelector('#player-name');
+const deadMessage = document.querySelector('#dead-p');
+const introMessage = document.querySelector('#intro-p');
+const deadMemorial = document.querySelector('#dead-memorial')
 // const retireBtn = document.querySelector('#retired');
 // const rebornBtn = document.querySelector('#reborn');
+menuBoard.style.display = "block";
+deadMessage.style.display = "none";
+deadMemorial.style.display = "none";
 
-function localStorage () {
-    if(JSON.parse(window.localStorage.getItem('scores')) !== null) {
-        console.log(JSON.parse(localStorage.getItem('scores')))
+if(localStorage) {
+    console.log(localStorage)
+    showLeaderBoard()
+}
+
+function opLocalStorage (score) {
+    let leaderBoard;
+
+    if(JSON.parse(localStorage.getItem('Leader Board')) !== null) {
+        leaderBoard = JSON.parse(localStorage.getItem('Leader Board'))
+        
     } else {
-        let scoreList = JSON.parse(localStorage.getItem('scores') ||  '[]');
-        scoreList.push(score);
+        leaderBoard = JSON.parse(localStorage.getItem('Leader Board') ||  '[]');
+       
     }
+
+    leaderBoard.push(score)
+    localStorage.setItem('Leader Board',JSON.stringify(leaderBoard))
+
+}
+
+function showLeaderBoard () {
+    let scoreList = JSON.parse(localStorage.getItem('Leader Board'))
+    
+    scoreList = scoreList.sort((a,b) => b.point - a.point)
+
+    const leaderBoard = document.querySelector('#leader-board');
+
+    // fill in the table for leaderboard
+    // learn and refence code from WS3School: https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_table_insertrow 
+    scoreList.forEach((item, index) => {
+        if(index <= 10) {
+            let row = leaderBoard.insertRow(index+1);
+            let name = row.insertCell(0);
+            let point = row.insertCell(1);
+            name.innerHTML = item.player;
+            point.innerHTML = item.point;
+        }
+        
+    })
 }
 
 function closeMenu() {
@@ -30,7 +69,7 @@ function Retired() {
         point: gameStage.killCount
     }
     playerName.value = ''
-    localStorage(score)
+    opLocalStorage(score)
 }
 
 // hold attribute relate to the stage of the game
@@ -80,6 +119,9 @@ async function gameEnd() {
     Promise.all([destroyEnemy, destroyShell, destroyEnemyShell])
         .then(() => {
             gameStage.running = false;
+            introMessage.style.display = "none"
+            deadMessage.style.display = "block"
+            deadMemorial.style.display = "block"
             pauseGame();
         })
 
@@ -122,6 +164,11 @@ function spawnEnemy() {
     }, 3000)
 }
 
+// reborn again 
+function Reborn() {
+    location.reload();
+}
+
 // toggle start or pause game
 function startPause(e) {
     gameStage.running = !gameStage.running;
@@ -143,12 +190,15 @@ function startPause(e) {
 }
 
 function pauseGame() {
+    // when the game is pause, all timers are destroy
     clearInterval(gameStage.spawnEnemyTimer)
     clearInterval(gameStage.shellColisionTimer)
     clearInterval(gameStage.enemyShellColisionTimer)
+    
+    menuBoard.style.display = "block"
 }
 
-// listen for key press to take action
+// listen for key press to take action on moving the tank or reload
 document.addEventListener('keydown', e => {
 
     if (gameStage.running) {
@@ -158,7 +208,8 @@ document.addEventListener('keydown', e => {
 })
 
 
-// target cursor
+// target cursor show the location the round will travel
+// player use this for aiming
 const targetCursor = {
     currentX: 0,
     currentY: 0,

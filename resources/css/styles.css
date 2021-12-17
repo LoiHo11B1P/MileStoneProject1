@@ -106,7 +106,7 @@ h1 {
 #menu-board {
     width: 100%;
     height: 100%;
-    background-color:  rgba(0, 0, 0, 0.712);
+    background-color:  rgba(32, 24, 14, 0.712);
     position: absolute;
     display: none;
     top: 0;
@@ -115,13 +115,13 @@ h1 {
 }
 
 #menu-content {
-    width: 50%;
-    height: 50%;
-    background-color: black;
+    width: 60%;
+    height: fit-content;
+    background-color: rgb(14, 9, 1);
     color: white;
     position: absolute;
     top: 25vh;
-    left: 25vw;
+    left: 20vw;
     margin: 0 auto;
     z-index: 12;
     
@@ -135,6 +135,6 @@ table {
   
   td, th {
     border: 1px solid #dddddd;
-    text-align: left;
+    text-align: center;
     padding: 8px;
   }

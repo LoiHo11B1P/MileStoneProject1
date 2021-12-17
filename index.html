@@ -48,51 +48,59 @@
     </div>
     <!-- Modal From Bootstrap to display game score -->
     <div id="menu-board">
-        <div id="menu-content" class="container-fluid">
-            <div class="row border border-2 border-dark">
+        <div id="menu-content" class="container">
+            <div class="row p-2">
                 <div class="col-7">
                     <div class="row">
                         <div class="col-12">
-                            <h1 class="m-2">Are You Ready?</h1>
+                            
                         </div>
                         <div class="col-12 mx-2">
-                            <p id="intro-p">Fight to the end! Many had fought for a greater cause and for glory. 
-                                Will you make history or will you ?
+                            <div id="intro-p">
+                                <h1>Are You Ready?</h1>
+                            <p>Fight to the end! Many had fought for a greater cause and for glory. 
+                                Will you make history or will you surrender to superior odd?
                             </p>
-                            <p id="dead-p">You have long peace, now write your name down in history and rest in peace...Or born and fight again! For
+                            <h4>Control:</h4>
+                            <p>Use "A" to move Left, "D" to move Right, "R" to Reload, Aim with Mouse Cursor, and Fire Weapon with Left-Mouse.</p>
+                            <p>Press "Close" and then "Start Game" to Begin.</p>
+                            </div>
+                            <div id="dead-p">
+                                <h1>R.I.P</h1>
+                            <p >You have long for peace, now write your name down in history and rest in peace...Or born and fight again! For
                                 Glory!!!</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="row p-2">
-                        <div class="col-6">
-                            <label for="player-name">Name: </label>
-                            <input type="text" id="player-name" maxlength="20">
+                    <div class="row p-2" id="dead-memorial">
+                        <div class="col-12">
+                            <label for="player-name" >Name: </label>
+                            <input type="text" id="player-name"  maxlength="20">
+                            <button class="btn btn-primary mx-5" id="retired" onclick="Retired()">Retired</button>
+                            <button class="btn btn-success ml-5" id="reborn" onclick="Reborn()">Reborn</button>
                         </div>
-                        <div class="col-5">
-                            <button class="btn btn-primary" id="retired" onclick="Retired()">Retired</button>
-                            <button class="btn btn-success" id="reborn" onclick="Reborn()">Reborn</button>
-                        </div>
+    
                     </div>
                 </div>
-                <div class="col-5 mt-2">
+                <div class="col-5">
                       <h2>Leader Board</h2> 
-                      <div id="leader-board">
-                          <table>
+                      <div>
+                          <table id="leader-board">
                             <tr>
                                 <th>Name</th>
                                 <th>Score</th>
                             </tr>
-                            <tr>
-                                <td>Vinh</td>
-                                <td>1000</td>
-                            </tr>
+                            
                           </table>
                       </div>     
                 </div>
             </div>
             <div class="row m-1">
-                <div class="col-4">
-                    <button class="btn btn-warning align-self-end" onclick="closeMenu()">Close</button>
+                <div class="col-2">
+                    <button class="btn btn-warning m-2" onclick="closeMenu()">Close</button>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-danger m-2" onclick="Reborn()">Restart</button>
                 </div>
             </div>
         </div>
