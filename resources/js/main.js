@@ -31,16 +31,22 @@ function opLocalStorage (score) {
     }
 
     leaderBoard.push(score)
-    localStorage.setItem('Leader Board',JSON.stringify(leaderBoard))
+    localStorage.setItem('Leader Board', JSON.stringify(leaderBoard))
+    showLeaderBoard();
 
 }
 
 function showLeaderBoard () {
+    // get leader board from local storage and display as table
     let scoreList = JSON.parse(localStorage.getItem('Leader Board'))
     
     scoreList = scoreList.sort((a,b) => b.point - a.point)
 
     const leaderBoard = document.querySelector('#leader-board');
+    // clear board to be refill
+    while(leaderBoard.rows.length > 1) {
+        leaderBoard.deleteRow(1);
+    }
 
     // fill in the table for leaderboard
     // learn and refence code from WS3School: https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_table_insertrow 
@@ -335,7 +341,7 @@ const player = {
                 this.reloadShell();
                 break;
             default:
-                console.log(`do nothing`)
+                //console.log(`do nothing`)
         }
 
 
