@@ -43,7 +43,7 @@ class Shell {
         
     }
 
-    shellExplode() {
+    async shellExplode() {
         let projectileList;
         this.width = 100
         this.height = 100
@@ -61,15 +61,28 @@ class Shell {
          
         let projectitleIndex = projectileList.indexOf(this.id)
         clearInterval(this.shellTravelTimer)
-
-        setTimeout(() => {
-            
-            projectileList.splice(projectitleIndex,1)
-            this.shell.remove()
-            //console.log(gameStage.projectiles)
-        }, 250);
         
+        await this.shellExplodeDelay(projectileList, projectitleIndex)
+
+        // setTimeout(() => {
             
+        //         projectileList.splice(projectitleIndex,1)
+        //         this.shell.remove()
+        //      //console.log(gameStage.projectiles)
+        // }, 250);
+  
+    }
+
+    shellExplodeDelay (projectileList, projectitleIndex) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+            
+                projectileList.splice(projectitleIndex,1)
+                this.shell.remove()
+                resolve()
+             //console.log(gameStage.projectiles)
+        }, 250);
+        })
     }
 
     shellTravel(type) {
@@ -80,11 +93,12 @@ class Shell {
         // 
         let angle = Math.atan2(distanY, distanX)
         
-        //
+    
         let aimAngle = angle*180/Math.PI
         //console.log(aimAngle)
         
-        // if aim angle is not more than 
+        // if aim angle is not more than 0 and less then -180
+        // enemy can fire at any angle
         if((aimAngle < 0  && aimAngle > -180) || type === 'enemy' ) {
             
             player.turretAngle = aimAngle

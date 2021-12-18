@@ -14,12 +14,9 @@ menuBoard.style.display = "block";
 deadMessage.style.display = "none";
 deadMemorial.style.display = "none";
 
-if(localStorage) {
-    console.log(localStorage)
-    showLeaderBoard()
-}
 
 function opLocalStorage (score) {
+    // write score to local storage
     let leaderBoard;
 
     if(JSON.parse(localStorage.getItem('Leader Board')) !== null) {
@@ -33,12 +30,16 @@ function opLocalStorage (score) {
     leaderBoard.push(score)
     localStorage.setItem('Leader Board', JSON.stringify(leaderBoard))
     showLeaderBoard();
-
+    Reborn();
 }
 
 function showLeaderBoard () {
     // get leader board from local storage and display as table
-    let scoreList = JSON.parse(localStorage.getItem('Leader Board'))
+    let scoreList = JSON.parse(localStorage.getItem('Leader Board') || '[]')
+
+    if(scoreList.length < 1) {
+        return;
+    }
     
     scoreList = scoreList.sort((a,b) => b.point - a.point)
 
@@ -62,6 +63,7 @@ function showLeaderBoard () {
     })
 }
 
+
 function closeMenu() {
     menuBoard.style.display = "none"
 }
@@ -76,6 +78,7 @@ function Retired() {
     }
     playerName.value = ''
     opLocalStorage(score)
+
 }
 
 // hold attribute relate to the stage of the game
@@ -96,7 +99,7 @@ const gameStage = {
 
 }
 
-async function gameEnd() {
+function gameEnd() {
     // set game state to pause,
     // clear all array and timer
     const destroyEnemy = new Promise(resolve => {
@@ -107,7 +110,7 @@ async function gameEnd() {
         resolve()
     })
 
-    const destroyShell = new Promise(resolve => {
+    const destroyShell =   new Promise(resolve => {
         gameStage.projectiles.forEach(shell => {
             shell.shellExplode();
 
@@ -115,7 +118,7 @@ async function gameEnd() {
         resolve()
     })
 
-    const destroyEnemyShell = new Promise(resolve => {
+    const destroyEnemyShell =  new Promise(resolve => {
         gameStage.enemyShell.forEach(shell => {
             shell.shellExplode();
         })
@@ -426,6 +429,7 @@ const player = {
     }
 }
 player.initPlayer()
+showLeaderBoard()
 
 // Mouse action
 gameArea.addEventListener('click', (e) => {
