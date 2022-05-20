@@ -9,6 +9,8 @@ $game-background-height: 755px;
 $game-ground-color: rgb(88, 57, 27);
 $tank-control-background: brown;
 $font-family: arial, sans-serif;
+$game-ground-bottom-position: 125px;
+$tank-magazine-background: rgb(27, 26, 26);
 
 @mixin gameBackground {
     position: relative;
@@ -62,7 +64,7 @@ h1 {
     width: 95vw;
     height: 40px;
     position: absolute;
-    bottom: 125px;
+    bottom: $game-ground-bottom-position;
     background-color: $game-ground-color;
 }
 
@@ -99,7 +101,7 @@ h1 {
 
 #tank-magazine {
     display: inline-flex;   
-    background-color: rgb(27, 26, 26);
+    background-color: $tank-magazine-background;
     
 }
 
