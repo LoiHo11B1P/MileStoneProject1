@@ -1,0 +1,171 @@
+// scss variables
+$zero-margin: 0;
+$zero-padding: 0;
+$background-color: rgb(230, 221, 221);
+$h1-font: 2em;
+$background-image: url('../media/ruincity_760.png');
+$game-background-width: 95vw;
+$game-background-height: 755px;
+$game-ground-color: rgb(88, 57, 27);
+$tank-control-background: brown;
+$font-family: arial, sans-serif;
+
+@mixin gameBackground {
+    position: relative;
+    width: $game-background-width;
+    height: $game-background-height;
+    background-image: $background-image;
+    background-repeat: no-repeat;
+    background-size: cover; 
+    margin-bottom: 0;
+    z-index: 0;
+}
+
+@mixin enemyShell {
+
+    width: 20px;
+    height: 40px;
+    background-color: red;
+    position: absolute;
+    
+}
+
+* {
+    margin: $zero-margin;
+    padding: $zero-padding;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    background-color: $background-color;
+    display: block; 
+}
+#game-intro{
+    text-align: center;
+    padding: 5px;
+}
+
+h1 {
+    font-size: $h1-font;
+}
+
+#game-area{
+
+    @include gameBackground()
+}
+
+#game-ground {
+    margin: 0 auto;
+    margin-top: 0;
+    width: 95vw;
+    height: 40px;
+    position: absolute;
+    bottom: 125px;
+    background-color: $game-ground-color;
+}
+
+#tank-control {
+    width: 95vw;
+    height: 100px;
+    background-color: $tank-control-background;
+    position: absolute;
+    bottom: 50px;
+    padding: 5px;
+    color: white;
+    font-size: 1.5em;
+}
+
+#player-tank {
+    padding: 0;
+    position: absolute;
+    bottom: 180px;
+    z-index: 2;
+    
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+    
+}
+
+#tank-turret {
+    position: absolute;
+    z-index: 1;
+}
+
+
+#tank-magazine {
+    display: inline-flex;   
+    background-color: rgb(27, 26, 26);
+    
+}
+
+.shell {
+    @include enemyShell();
+}
+
+.enemy{
+    pointer-events: none;
+    border: 2px solid red;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+
+}
+
+.tank-round {
+    height: 3.5em;
+    width: auto;
+}
+
+#target-cursor {
+   position: absolute;
+   caret-color: rgba(0,0,0,0);
+   -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+#menu-board {
+    width: 100%;
+    height: 100%;
+    background-color:  rgba(32, 24, 14, 0.712);
+    position: absolute;
+    display: none;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+#menu-content {
+    width: 60%;
+    height: fit-content;
+    background-color: rgb(14, 9, 1);
+    color: white;
+    position: absolute;
+    top: 25vh;
+    left: 20vw;
+    margin: 0 auto;
+    z-index: 12;
+    
+}
+
+table {
+    font-family: $font-family;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+td, th {
+
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 8px;
+  }

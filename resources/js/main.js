@@ -346,8 +346,6 @@ const player = {
             default:
                 //console.log(`do nothing`)
         }
-
-
     },
 
     updatePosition(x, y) {

@@ -18,7 +18,7 @@ Focus of the Development Journey:
     The most difficult part of the development is to decide whether to use a single timer loop to calculate all object movement and colission or individual instance of the object has it own timer loop. The proglem with the single timer loop is that at 1ms the inital loop haven't finish when the other one begin. In the end, I decided to to use time for each instance of the object (shell, enemyShell, player). I found this to be a better approach because I could avoid the double for loop on each object that would result in O(n^2) run time. 
 
 Technology Used:
-
+g
     HTML, CSS, JS, and Bootstrap
     I purposely avoid using 3rd party library to that I could focus on learning DOM menipulation (this my weakest area beside CSS).
     I also purposely avoid using Canvas because most of the tutorial I watch shown how to build the game using canvas.

@@ -34,7 +34,7 @@ class Enemy {
 
         this.fireShot()
        
-            await this.Traverse(this.travelPath[0][0])
+        await this.Traverse(this.travelPath[0][0])
         //console.log('move 1')
         clearInterval(this.flyTime)
         await this.Traverse(this.travelPath[0][1])

@@ -1,0 +1,140 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgb(230, 221, 221);
+    display: block; 
+}
+#game-intro{
+    text-align: center;
+    padding: 5px;
+}
+
+h1 {
+    font-size: 2em;
+}
+#game-area{
+    position: relative;
+    width: 95vw;
+    height: 755px;
+    /*background-color: cornflowerblue;*/
+    background-image: url('../media/ruincity_760.png');
+    background-repeat: no-repeat;
+    background-size: cover; 
+    margin-bottom: 0;
+    z-index: 0;
+}
+#game-ground {
+    margin: 0 auto;
+    margin-top: 0;
+    width: 95vw;
+    height: 40px;
+    position: absolute;
+    bottom: 125px;
+    background-color: rgb(88, 57, 27);
+}
+#tank-control {
+    width: 95vw;
+    height: 100px;
+    background-color: brown;
+    position: absolute;
+    bottom: 50px;
+    padding: 5px;
+    color: white;
+    font-size: 1.5em;
+}
+#player-tank {
+    padding: 0;
+    position: absolute;
+    bottom: 180px;
+    z-index: 2;
+    
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+    
+}
+#tank-turret {
+    position: absolute;
+    z-index: 1;
+}
+
+#tank-magazine {
+    display: inline-flex;   
+    background-color: rgb(27, 26, 26);
+    
+}
+
+.shell {
+    width: 20px;
+    height: 40px;
+    background-color: red;
+    position: absolute;
+}
+
+.enemy{
+    pointer-events: none;
+    border: 2px solid red;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+
+}
+.tank-round {
+    height: 3.5em;
+    width: auto;
+}
+
+#target-cursor {
+   position: absolute;
+   caret-color: rgba(0,0,0,0);
+   -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+#menu-board {
+    width: 100%;
+    height: 100%;
+    background-color:  rgba(32, 24, 14, 0.712);
+    position: absolute;
+    display: none;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+#menu-content {
+    width: 60%;
+    height: fit-content;
+    background-color: rgb(14, 9, 1);
+    color: white;
+    position: absolute;
+    top: 25vh;
+    left: 20vw;
+    margin: 0 auto;
+    z-index: 12;
+    
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 8px;
+  }
